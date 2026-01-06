@@ -28,7 +28,7 @@ resource "azurerm_cosmosdb_account" "db" {
   kind                            = "MongoDB"
   enable_automatic_failover       = false
   enable_multiple_write_locations = false
-  mongo_server_version            = "4.0"
+  mongo_server_version            = "4.2"
   tags                            = var.tags
 
   capabilities {
