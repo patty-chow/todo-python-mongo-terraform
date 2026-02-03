@@ -11,16 +11,16 @@ terraform {
   }
 }
 # ------------------------------------------------------------------------------------------------------
-# Deploy cosmos db account
+# Deploy documentdb account
 # ------------------------------------------------------------------------------------------------------
 resource "azurecaf_name" "db_acc_name" {
   name          = var.resource_token
-  resource_type = "azurerm_cosmosdb_account"
+  resource_type = "azurerm_documentdb_account"
   random_length = 0
   clean_input   = true
 }
 
-resource "azurerm_cosmosdb_account" "db" {
+resource "azurerm_documentdb_account" "db" {
   name                            = azurecaf_name.db_acc_name.result
   location                        = var.location
   resource_group_name             = var.rg_name
@@ -50,19 +50,19 @@ resource "azurerm_cosmosdb_account" "db" {
 }
 
 # ------------------------------------------------------------------------------------------------------
-# Deploy cosmos mongo db and collections
+# Deploy documentdb mongo db and collections
 # ------------------------------------------------------------------------------------------------------
-resource "azurerm_cosmosdb_mongo_database" "mongodb" {
+resource "azurerm_documentdb_mongo_database" "mongodb" {
   name                = "Todo"
-  resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
-  account_name        = azurerm_cosmosdb_account.db.name
+  resource_group_name = azurerm_documentdb_account.db.resource_group_name
+  account_name        = azurerm_documentdb_account.db.name
 }
 
-resource "azurerm_cosmosdb_mongo_collection" "list" {
+resource "azurerm_documentdb_mongo_collection" "list" {
   name                = "TodoList"
-  resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
-  account_name        = azurerm_cosmosdb_account.db.name
-  database_name       = azurerm_cosmosdb_mongo_database.mongodb.name
+  resource_group_name = azurerm_documentdb_account.db.resource_group_name
+  account_name        = azurerm_documentdb_account.db.name
+  database_name       = azurerm_documentdb_mongo_database.mongodb.name
   shard_key           = "_id"
 
 
@@ -71,11 +71,11 @@ resource "azurerm_cosmosdb_mongo_collection" "list" {
   }
 }
 
-resource "azurerm_cosmosdb_mongo_collection" "item" {
+resource "azurerm_documentdb_mongo_collection" "item" {
   name                = "TodoItem"
-  resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
-  account_name        = azurerm_cosmosdb_account.db.name
-  database_name       = azurerm_cosmosdb_mongo_database.mongodb.name
+  resource_group_name = azurerm_documentdb_account.db.resource_group_name
+  account_name        = azurerm_documentdb_account.db.name
+  database_name       = azurerm_documentdb_mongo_database.mongodb.name
   shard_key           = "_id"
 
   index {

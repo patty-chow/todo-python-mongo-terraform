@@ -1,9 +1,9 @@
-output "AZURE_COSMOS_CONNECTION_STRING_KEY" {
-  value = local.cosmos_connection_string_key
+output "AZURE_DOCUMENTDB_CONNECTION_STRING_KEY" {
+  value = local.documentdb_connection_string_key
 }
 
-output "AZURE_COSMOS_DATABASE_NAME" {
-  value = module.cosmos.AZURE_COSMOS_DATABASE_NAME
+output "AZURE_DOCUMENTDB_DATABASE_NAME" {
+  value = module.documentdb.AZURE_DOCUMENTDB_DATABASE_NAME
 }
 
 output "AZURE_KEY_VAULT_ENDPOINT" {

@@ -3,7 +3,7 @@ locals {
   sha                          = base64encode(sha256("${var.environment_name}${var.location}${data.azurerm_client_config.current.subscription_id}"))
   resource_token               = substr(replace(lower(local.sha), "[^A-Za-z0-9_]", ""), 0, 13)
   api_command_line             = "gunicorn --workers 4 --threads 2 --timeout 60 --access-logfile \"-\" --error-logfile \"-\" --bind=0.0.0.0:8000 -k uvicorn.workers.UvicornWorker todo.app:app"
-  cosmos_connection_string_key = "AZURE-COSMOS-CONNECTION-STRING"
+  documentdb_connection_string_key = "AZURE-DOCUMENTDB-CONNECTION-STRING"
 }
 # ------------------------------------------------------------------------------------------------------
 # Deploy resource Group
@@ -59,17 +59,17 @@ module "keyvault" {
   access_policy_object_ids = [module.api.IDENTITY_PRINCIPAL_ID]
   secrets = [
     {
-      name  = local.cosmos_connection_string_key
-      value = module.cosmos.AZURE_COSMOS_CONNECTION_STRING
+      name  = local.documentdb_connection_string_key
+      value = module.documentdb.AZURE_DOCUMENTDB_CONNECTION_STRING
     }
   ]
 }
 
 # ------------------------------------------------------------------------------------------------------
-# Deploy cosmos
+# Deploy documentdb
 # ------------------------------------------------------------------------------------------------------
-module "cosmos" {
-  source         = "./modules/cosmos"
+module "documentdb" {
+  source         = "./modules/documentdb"
   location       = var.location
   rg_name        = azurerm_resource_group.rg.name
   tags           = azurerm_resource_group.rg.tags
@@ -121,8 +121,8 @@ module "api" {
   service_name       = "api"
   appservice_plan_id = module.appserviceplan.APPSERVICE_PLAN_ID
   app_settings = {
-    "AZURE_COSMOS_CONNECTION_STRING_KEY"    = local.cosmos_connection_string_key
-    "AZURE_COSMOS_DATABASE_NAME"            = module.cosmos.AZURE_COSMOS_DATABASE_NAME
+    "AZURE_DOCUMENTDB_CONNECTION_STRING_KEY"    = local.documentdb_connection_string_key
+    "AZURE_DOCUMENTDB_DATABASE_NAME"            = module.documentdb.AZURE_DOCUMENTDB_DATABASE_NAME
     "SCM_DO_BUILD_DURING_DEPLOYMENT"        = "true"
     "AZURE_KEY_VAULT_ENDPOINT"              = module.keyvault.AZURE_KEY_VAULT_ENDPOINT
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = module.applicationinsights.APPLICATIONINSIGHTS_CONNECTION_STRING
